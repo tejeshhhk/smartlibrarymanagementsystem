@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Library Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Glowing Decoration -->
+    <div class="glow-bg"></div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <span>Athena Libs</span>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="nav-btn-catalog" onclick="switchTab('catalog')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span>Book Search</span>
+                </button>
+                <button class="nav-btn" id="nav-btn-student-lookup" onclick="switchTab('student-lookup')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>My Borrowed Books</span>
+                </button>
+                <button class="nav-btn" id="nav-btn-admin-login" onclick="switchTab('admin-login')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span>Admin Panel</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="status-indicator online"></span>
+                <span>System Online</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Header bar -->
+            <header class="top-bar">
+                <h1 id="view-title">Book Search</h1>
+                <div class="user-status" id="admin-indicator" style="display: none;">
+                    <div class="admin-badge">
+                        <span class="pulse"></span>
+                        Admin Mode
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="logoutAdmin()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Error/Success Alert Bar -->
+            <div id="alert-banner" class="alert" style="display: none;">
+                <span id="alert-message"></span>
+                <button class="alert-close" onclick="closeAlert()">×</button>
+            </div>
+
+            <!-- View 1: Book Search (Public Catalog) -->
+            <section id="view-catalog" class="view-section active">
+                <div class="search-bar-container">
+                    <div class="search-box">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="catalog-search-input" placeholder="Search books by title, author, isbn, category..." oninput="fetchBooks()">
+                    </div>
+                    <select id="catalog-category-filter" onchange="fetchBooks()">
+                        <option value="ALL">All Categories</option>
+                        <option value="FICTION">Fiction</option>
+                        <option value="NON_FICTION">Non-Fiction</option>
+                        <option value="SCIENCE">Science</option>
+                        <option value="TECHNOLOGY">Technology</option>
+                        <option value="HISTORY">History</option>
+                        <option value="BIOGRAPHY">Biography</option>
+                        <option value="MATHEMATICS">Mathematics</option>
+                        <option value="LITERATURE">Literature</option>
+                    </select>
+                </div>
+
+                <div class="book-grid" id="catalog-book-grid">
+                    <!-- Cards will load dynamically -->
+                </div>
+            </section>
+
+            <!-- View 2: Student Lookup (Borrowed books search) -->
+            <section id="view-student-lookup" class="view-section">
+                <div class="glass-card lookup-card">
+                    <h2>Check My Borrowed Books & Fines</h2>
+                    <p class="subtitle">Enter your student ID to see your active checkouts and overdue fines.</p>
+                    <div class="lookup-form">
+                        <input type="text" id="student-lookup-id" placeholder="Enter Student ID (e.g. ST001)">
+                        <button class="btn btn-primary" onclick="lookupStudent()">Search</button>
+                    </div>
+                </div>
+
+                <div id="student-lookup-results" style="display: none;">
+                    <div class="student-profile-summary glass-card">
+                        <div class="profile-info">
+                            <h3 id="lookup-student-name">-</h3>
+                            <span class="badge badge-indigo" id="lookup-student-dept">-</span>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat-box">
+                                <span class="stat-num" id="lookup-books-count">0</span>
+                                <span class="stat-label">Books Borrowed</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-num text-warning" id="lookup-fines-total">Rs. 0.00</span>
+                                <span class="stat-label">Total Overdue Fines</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title">Borrowed Book List</h3>
+                    <div class="table-container glass-card">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Book ID</th>
+                                    <th>Title</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Fine Accumulation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-borrowed-books-table">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 3: Admin Login -->
+            <section id="view-admin-login" class="view-section">
+                <div class="login-container">
+                    <div class="glass-card login-card">
+                        <h2>Administrator Login</h2>
+                        <p class="subtitle">Authenticate to access advanced library management tools.</p>
+                        <form id="login-form" onsubmit="loginAdmin(event)">
+                            <div class="form-group">
+                                <label for="login-username">Username</label>
+                                <input type="text" id="login-username" placeholder="Enter admin username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Password</label>
+                                <input type="password" id="login-password" placeholder="Enter admin password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Authenticate</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 4: Admin Panel (Authorized only) -->
+            <section id="view-admin-dashboard" class="view-section">
+                
+                <!-- Quick controls / Undo stack -->
+                <div class="admin-controls-panel glass-card">
+                    <div class="panel-left">
+                        <h2>Control Center</h2>
+                        <p class="subtitle">Perform cataloging operations, register students, and process transactions.</p>
+                    </div>
+                    <div class="panel-right">
+                        <button class="btn btn-warning" id="undo-btn" onclick="triggerUndo()" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; margin-right: 6px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                            </svg>
+                            <span>Undo Action</span>
+                            <span class="badge badge-red" id="undo-badge" style="display:none;">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="tab-container">
+                    <div class="tab-headers">
+                        <button class="tab-header active" onclick="switchAdminTab('books')">Books Catalog</button>
+                        <button class="tab-header" onclick="switchAdminTab('students')">Students Registry</button>
+                        <button class="tab-header" onclick="switchAdminTab('issues')">Borrow & Returns</button>
+                        <button class="tab-header" onclick="switchAdminTab('logs')">System Logs</button>
+                    </div>
+
+                    <!-- Admin Sub-tab 1: Books Management -->
+                    <div id="admin-tab-books" class="admin-tab-content active">
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <input type="text" id="admin-book-search" placeholder="Search books by ID, title, author..." oninput="loadAdminBooks()">
+                            </div>
+                            <button class="btn btn-emerald" onclick="openBookModal()">Add Book</button>
+                        </div>
+                        <div class="table-container glass-card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Book ID</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Category</th>
+                                        <th>Copies</th>
+                                        <th>Shelf</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-books-table">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Admin Sub-tab 2: Students Management -->
+                    <div id="admin-tab-students" class="admin-tab-content">
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <input type="text" id="admin-student-search" placeholder="Search students by ID, name..." oninput="loadAdminStudents()">
+                            </div>
+                            <button class="btn btn-indigo" onclick="openStudentModal()">Register Student</button>
+                        </div>
+                        <div class="table-container glass-card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Borrowed Books</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-students-table">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Admin Sub-tab 3: Borrow / Returns -->
+                    <div id="admin-tab-issues" class="admin-tab-content">
+                        <div class="issue-flex-container">
+                            <div class="glass-card issue-action-card">
+                                <h3>Issue a Book</h3>
+                                <form id="issue-book-form" onsubmit="processBorrow(event)">
+                                    <div class="form-group">
+                                        <label for="issue-student-id">Student ID</label>
+                                        <input type="text" id="issue-student-id" placeholder="e.g. ST001" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="issue-book-id">Book ID</label>
+                                        <input type="text" id="issue-book-id" placeholder="e.g. BK001" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-emerald btn-block">Issue Book</button>
+                                </form>
+                            </div>
+
+                            <div class="glass-card issue-history-card">
+                                <h3>Active Book Borrowings</h3>
+                                <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Issue ID</th>
+                                                <th>Student ID</th>
+                                                <th>Book ID</th>
+                                                <th>Due Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-issues-table">
+                                            <!-- Dynamic rows -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Sub-tab 4: Logs Terminal -->
+                    <div id="admin-tab-logs" class="admin-tab-content">
+                        <div class="logs-header">
+                            <h3>System Activity Log</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="loadLogs()">Refresh Log</button>
+                        </div>
+                        <div class="terminal-container">
+                            <div class="terminal-body" id="logs-terminal">
+                                <!-- Dynamic log lines -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal 1: Add/Edit Book -->
+    <div class="modal" id="book-modal" style="display: none;">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 id="book-modal-title">Add New Book</h3>
+                <span class="modal-close" onclick="closeBookModal()">&times;</span>
+            </div>
+            <form id="book-form" onsubmit="saveBook(event)">
+                <input type="hidden" id="book-form-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-form-title">Book Title</label>
+                        <input type="text" id="book-form-title" placeholder="e.g. Clean Code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-form-author">Author</label>
+                        <input type="text" id="book-form-author" placeholder="e.g. Robert C. Martin" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-form-isbn">ISBN</label>
+                        <input type="text" id="book-form-isbn" placeholder="e.g. 978-0132350884" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-form-category">Category</label>
+                        <select id="book-form-category" required>
+                            <option value="FICTION">Fiction</option>
+                            <option value="NON_FICTION">Non-Fiction</option>
+                            <option value="SCIENCE">Science</option>
+                            <option value="TECHNOLOGY" selected>Technology</option>
+                            <option value="HISTORY">History</option>
+                            <option value="BIOGRAPHY">Biography</option>
+                            <option value="MATHEMATICS">Mathematics</option>
+                            <option value="LITERATURE">Literature</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-form-publisher">Publisher</label>
+                        <input type="text" id="book-form-publisher" placeholder="e.g. Prentice Hall">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-form-year">Publication Year</label>
+                        <input type="number" id="book-form-year" placeholder="e.g. 2008" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-form-copies">Total Copies</label>
+                        <input type="number" id="book-form-copies" placeholder="e.g. 3" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-form-shelf">Shelf Location</label>
+                        <input type="text" id="book-form-shelf" placeholder="e.g. B-04">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeBookModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Register Student -->
+    <div class="modal" id="student-modal" style="display: none;">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Register Student</h3>
+                <span class="modal-close" onclick="closeStudentModal()">&times;</span>
+            </div>
+            <form id="student-form" onsubmit="saveStudent(event)">
+                <div class="form-group">
+                    <label for="student-form-name">Student Full Name</label>
+                    <input type="text" id="student-form-name" placeholder="e.g. Jane Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="student-form-dept">Department</label>
+                    <input type="text" id="student-form-dept" placeholder="e.g. Computer Science" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="student-form-phone">Phone Number (10 digits)</label>
+                        <input type="tel" id="student-form-phone" placeholder="e.g. 9876543210" required pattern="\d{10}">
+                    </div>
+                    <div class="form-group">
+                        <label for="student-form-email">Email Address</label>
+                        <input type="email" id="student-form-email" placeholder="e.g. jane@example.com" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeStudentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

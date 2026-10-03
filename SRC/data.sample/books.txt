@@ -1,0 +1,4 @@
+BK001|978-0134685991|Effective Java|Joshua Bloch|TECHNOLOGY|Addison-Wesley|2018|5|5|A-12
+BK002|978-0132350884|Clean Code|Robert C. Martin|TECHNOLOGY|Prentice Hall|2008|3|3|B-04
+BK003|978-0596009205|Head First Design Patterns|Eric Freeman|TECHNOLOGY|O'Reilly|2004|4|4|B-09
+BK004|978-0321356680|Design Patterns|Erich Gamma|TECHNOLOGY|Addison-Wesley|1994|2|2|A-02

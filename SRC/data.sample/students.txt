@@ -1,0 +1,3 @@
+ST001|Sample Student|Computer Science|9876543210|student@example.com
+ST002|Jane Smith|Electrical Engineering|8765432109|jane.smith@example.com
+ST003|Bob Johnson|Mathematics|7654321098|bob.johnson@example.com

@@ -1,0 +1,22 @@
+# Build output
+bin/
+sources.txt
+*.class
+
+# Live data storage files (tracked sample copies reside in SRC/data.sample/)
+SRC/data/*.txt
+SRC/data/*.tmp*
+
+# Temporary test backups
+SRC/data_backup/
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+Thumbs.db
+.DS_Store
